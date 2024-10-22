@@ -5,6 +5,7 @@
 *.dylib
 *.test
 .DS_Store
+/tmp
 
 # Output of the go coverage tool
 *.out
