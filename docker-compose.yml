@@ -1,13 +1,13 @@
-version: "3.8"
-
 services:
   api:
     build: .
     container_name: go-api
     ports:
       - "8080:8080"
+    volumes:
+      - .:/app  # ホストのソースコードをコンテナ内にマウントしてホットリロード対応
     environment:
-      - GO_ENV=production
+      - GO_ENV=development
     depends_on:
       - db
 

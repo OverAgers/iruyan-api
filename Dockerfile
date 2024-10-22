@@ -1,35 +1,20 @@
-# Stage 1: Build the Go binary
-FROM golang:1.23-alpine AS builder
+# ベースイメージとしてGoの公式イメージを使用
+FROM golang:1.23-alpine
 
-# Set the Current Working Directory inside the container
+# ホットリロードツール air をインストール
+RUN go install github.com/air-verse/air@latest
+
+# 作業ディレクトリを設定
 WORKDIR /app
 
-# Copy go mod and go sum files
+# go.mod と go.sum をコンテナにコピー
 COPY go.mod go.sum ./
 
-# Download all dependencies. Dependencies will be cached if go.mod and go.sum are not changed
+# 依存関係をダウンロード
 RUN go mod download
 
-# Copy the source code into the container
+# アプリケーションのソースコードをすべてコンテナにコピー
 COPY . .
 
-# Build the Go app
-RUN go build -o main .
-
-# Stage 2: Run the Go binary
-FROM alpine:latest
-
-# Set environment variable
-ENV GO_ENV=production
-
-# Set the Current Working Directory inside the container
-WORKDIR /root/
-
-# Copy the Pre-built binary file from the builder stage
-COPY --from=builder /app/main .
-
-# Expose port 8080 to the outside world
-EXPOSE 8080
-
-# Command to run the executable
-CMD ["./main"]
+# ホットリロード用の air を使用して起動
+CMD ["air"]
